@@ -40,6 +40,7 @@ function logIt() {
             for(var i in options.requirements) {
                 var requirement = options.requirements[i];
                 if(!private_methods.run_test(requirement)) {
+                    console.log("failed test - "+requirement);
                     public_methods.show();
                 }
             }
@@ -195,6 +196,6 @@ function logIt() {
     };
 
     $.fn.intervention.default_options = {
-        requirements: ['fontface','canvas','cssgradients','opacity']
+        requirements: ['fontface','canvas','cssgradients']
     }
 })(jQuery);
