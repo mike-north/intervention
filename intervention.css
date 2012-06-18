@@ -3,8 +3,9 @@
  */
 
 #intervention-browser-upgrade-prompt {
-    position: absolute;
+    position: fixed;
     top: 0px;
+    z-index: 9999999;
     left: 0px;
     width: 100%;
     display: inline-block;
@@ -69,7 +70,7 @@
     }
 
     body.intervention-active {
-        padding-top: 70px;
+        margin-top: 70px !important;
     }
 
     #intervention-browser-upgrade-prompt .intervention-message {
@@ -128,7 +129,7 @@
     }
 
     body.intervention-active {
-        padding-top: 80px;
+        margin-top: 80px !important;
     }
 
     #intervention-browser-upgrade-prompt .intervention-message {
