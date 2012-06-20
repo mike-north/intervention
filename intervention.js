@@ -1,24 +1,50 @@
-//
-//= require_self
-//
+/**
+ * Intervention
+ * by Michael North @ TrueNorth Applications, LLC
+ * http://www.truenorthapps.com
+ */
 
-
-function logIt() {
-    console.log('ok');
-
-}
+(function () {
+ 
+    
+ 
+ 
+})();
 
 (function ($) {
+
+	//the name of this plugin
     var plugin_name = "intervention";
+    //the version of this plugin
     var version = "0.0.1.alpha.1";
 
-    var private_methods = {
-
-        init:function (options) {
-
-
+	
+	var loadScript = function(url, callback) {
+ 
+        var script = document.createElement("script")
+        script.type = "text/javascript";
+ 
+        if (script.readyState) { //IE
+            script.onreadystatechange = function () {
+                if (script.readyState == "loaded" || script.readyState == "complete") {
+                    script.onreadystatechange = null;
+                    callback();
+                }
+            };
+        } else { //Others
+            script.onload = function () {
+                callback();
+            };
+        }
+ 
+        script.src = url;
+        document.getElementsByTagName("head")[0].appendChild(script);
+    }
+	
+    var private_methods = 
+    {
+    	init:function (options) {
             var opts = options;
-
             $.getJSON("http://query.yahooapis.com/v1/public/yql",
                     {
                         q:"select * from json where url=" +
@@ -27,10 +53,12 @@ function logIt() {
                     },
                     function (data, request_status, xhr) {
                         if (data.query.results) {
-                            setData('browserdata',data.query.results.browsers);
+                        	var dat = data.query.results.browsers;
+                            setData('browserdata',dat);
+                            ifDebug(function(){console.log(["Browser Data",dat])});
                             private_methods.run_tests(opts);
                         } else {
-                            console.error('Problem accessing heroku status information');
+                            console.error('Problem downloading browser information');
                         }
                     }
                 );
@@ -40,26 +68,22 @@ function logIt() {
             for(var i in options.requirements) {
                 var requirement = options.requirements[i];
                 if(!private_methods.run_test(requirement)) {
-                    console.log("failed test - "+requirement);
+                	ifDebug(function(){console.log("failed test - "+requirement)});
                     public_methods.show();
+                } else {
+                	ifDebug(function(){console.log("passed test - "+requirement)});
                 }
             }
         },
         run_test: function(test) {
             switch(test) {
-                case "fontface":
-                    return Modernizr.fontface;
+                default:
+                    if(Modernizr[test] != undefined) {
+                        return Modernizr[test];
+                    } else {
+                        throw "no test for \""+test+"\"";
+                    }
                     break;
-                case "canvas":
-                    return Modernizr.canvas;
-                    break;
-                case "cssgradients":
-                    return Modernizr.cssgradients;
-                    break;
-                case "opacity":
-                    return Modernizr.opacity;
-                    break;
-                default: throw "no test for \""+test+"\"";
             }
         },
 
@@ -72,15 +96,10 @@ function logIt() {
         },
         check_modernizr_and_init:function (options) {
             //Check for presence of Modernizr
-            if (!private_methods.is_modernizr_ok(options)) {
-                var script_tag = document.createElement('script');
-                script_tag.setAttribute("type", "text/javascript");
-                script_tag.setAttribute("src", "http://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.0.6-development-only.js");
-                script_tag.onload = private_methods.init(options); // Run ka.init() once jQuery has loaded
-                script_tag.onreadystatechange = function () { // Same thing but for IE
-                    if (this.readyState == 'complete' || this.readyState == 'loaded') private_methods.init(options);
-                }
-                document.getElementsByTagName("head")[0].appendChild(script_tag);
+            if (!private_methods.is_modernizr_ok(options)) {            
+    			loadScript("http://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.0.6-development-only.js", function () {
+    				private_methods.init(options); // Run ka.init() once jQuery has loaded
+    			});
             } else {
                 private_methods.init(options);
             }
@@ -148,7 +167,7 @@ function logIt() {
 
             $('body').prepend("<div id=\"intervention-browser-upgrade-prompt\" style='display:none'><!-- Intervention --></div>");
 
-            $("#intervention-browser-upgrade-prompt").append("<div class='intervention-message'>Your browser is out of date. Please upgrade it</div>");
+            $("#intervention-browser-upgrade-prompt").append("<div class='intervention-message'>Your browser is out of date. Please upgrade to one of these:</div>");
 
             var chrome_section = document.createElement('div');
             $(chrome_section).addClass('intervention-section');
@@ -194,8 +213,15 @@ function logIt() {
             $.error('Method ' + method + ' does not exist on jQuery.intervention');
         }
     };
+    
+    $.fn.intervention.debug = false;
 
     $.fn.intervention.default_options = {
-        requirements: ['fontface','canvas','cssgradients']
+        requirements: ['fontface','canvas','cssgradients','boxshadow','borderradius','csstransforms','textshadow','cssmask','backgroundcliptext']
     }
+	var ifDebug = function(f) {
+		if($.fn.intervention.debug == true) {
+			f.apply(this);
+		}
+	};
 })(jQuery);

@@ -4,6 +4,7 @@
 
 #intervention-browser-upgrade-prompt {
     position: fixed;
+    font-family: sans-serif;
     top: 0px;
     z-index: 9999999;
     left: 0px;

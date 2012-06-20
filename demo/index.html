@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+
+<link rel="stylesheet" href="../intervention.css"></link>
+
+</head>
+<body>
+<h1> This is a test</h1>
+
+
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<!--
+<script type="text/javascript" src="js/modernizr.custom.46580.js"></script>
+-->
+<script type="text/javascript" src="../intervention.js"></script>
+
+<script type="text/javascript">
+	
+    $().intervention({
+        requirements: [
+            'fontface',
+            'canvas',
+            'cssgradients',
+            'boxshadow',
+            'borderradius',
+            'csstransforms',
+            'textshadow',
+            'cssmask',
+            'backgroundcliptext'
+        ]
+    });
+    $().intervention('show');
+</script>
+</body>
+
+
+</html>
